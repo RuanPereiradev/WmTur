@@ -1,21 +1,23 @@
 // Conteúdo do PDF da WmTur. Edite preços, paradas e rotas aqui.
+// caminho das fotos e vídeos (funciona no GitHub Pages e em domínio próprio)
+const A = import.meta.env.BASE_URL + 'assets/';
 export const TOURS = [
-  { name: 'Passeio Leste', price: 500, dur: '4 a 6 horas', img: '/assets/tour-leste.png',
+  { name: 'Passeio Leste', price: 500, dur: '4 a 6 horas', img: A + 'tour-leste.png',
     places: ['Árvore da Preguiça', 'Preá', 'Buraco Azul', 'Laguna Beach', 'Lagoa do Paraíso', 'Lagoa entre as Dunas'] },
-  { name: 'Extremo Leste', price: 500, dur: '4 a 6 horas', img: '/assets/tour-extremo-leste.png',
+  { name: 'Extremo Leste', price: 500, dur: '4 a 6 horas', img: A + 'tour-extremo-leste.png',
     places: ['Preá', 'Barrinha', 'Off-road nas dunas', 'Restaurante Komaki', 'Beira d’Água ou Munzuá'] },
-  { name: 'Passeio Oeste', price: 600, dur: '6 horas', img: '/assets/tour-oeste.png',
+  { name: 'Passeio Oeste', price: 600, dur: '6 horas', img: A + 'tour-oeste.png',
     places: ['Cavalo Marinho', 'Travessia de balsa', 'Mangue Seco Guriú', 'Off-road nas dunas', 'Tobogã e skibunda', 'Laguna Beach'] },
-  { name: 'Extremo Oeste', price: 700, dur: '6 horas', img: '/assets/tour-extremo-oeste.png',
+  { name: 'Extremo Oeste', price: 700, dur: '6 horas', img: A + 'tour-extremo-oeste.png',
     places: ['Nova Tatajuba', 'Dunas petrificadas', 'Duna do Funil com skibunda', 'Laguinho da Torta', 'Laguna Beach'] },
 ];
 
 // Fotos que passam como "stories" na primeira tela
 export const REEL = [
-  { img: '/assets/tour-extremo-oeste.png', label: 'Jardineira ou SW4 · 6 horas', tour: 'Extremo Oeste', priceLabel: 'Nova Tatajuba, dunas petrificadas e Duna do Funil · por carro', price: 'R$ 700' },
-  { img: '/assets/tour-leste.png', label: 'Jardineira ou SW4 · 4 a 6 horas', tour: 'Passeio Leste', priceLabel: 'Árvore da Preguiça, Buraco Azul e Lagoa do Paraíso · por carro', price: 'R$ 500' },
-  { img: '/assets/tour-oeste.png', label: 'Jardineira ou SW4 · 6 horas', tour: 'Passeio Oeste', priceLabel: 'Balsa, Mangue Seco Guriú, tobogã e skibunda · por carro', price: 'R$ 600' },
-  { img: '/assets/tour-extremo-leste.png', label: 'Jardineira ou SW4 · 4 a 6 horas', tour: 'Extremo Leste', priceLabel: 'Preá, Barrinha e off-road nas dunas · por carro', price: 'R$ 500' },
+  { img: A + 'tour-extremo-oeste.png', label: 'Jardineira ou SW4 · 6 horas', tour: 'Extremo Oeste', priceLabel: 'Nova Tatajuba, dunas petrificadas e Duna do Funil · por carro', price: 'R$ 700' },
+  { img: A + 'tour-leste.png', label: 'Jardineira ou SW4 · 4 a 6 horas', tour: 'Passeio Leste', priceLabel: 'Árvore da Preguiça, Buraco Azul e Lagoa do Paraíso · por carro', price: 'R$ 500' },
+  { img: A + 'tour-oeste.png', label: 'Jardineira ou SW4 · 6 horas', tour: 'Passeio Oeste', priceLabel: 'Balsa, Mangue Seco Guriú, tobogã e skibunda · por carro', price: 'R$ 600' },
+  { img: A + 'tour-extremo-leste.png', label: 'Jardineira ou SW4 · 4 a 6 horas', tour: 'Extremo Leste', priceLabel: 'Preá, Barrinha e off-road nas dunas · por carro', price: 'R$ 500' },
 ];
 
 export const ROUTES = [
@@ -33,11 +35,11 @@ export const FLEET = [
 
 // Galeria estilo feed. v = vídeo, i = imagem
 export const GALLERY = [
-  { v: '/assets/wm-video-1.mp4', caption: 'Dunas de Jericoacoara' }, { i: '/assets/wm-foto-1.jpeg', caption: 'Pôr do sol na praia' },
-  { v: '/assets/wm-video-2.mp4', caption: 'A caminho' }, { i: '/assets/wm-foto-3.jpeg', caption: 'Moradores locais' },
-  { v: '/assets/wm-video-3.mp4', caption: 'Beira-mar' }, { i: '/assets/wm-foto-2.jpeg', caption: 'Fim de tarde' },
-  { v: '/assets/wm-video-4.mp4', caption: 'Balsa do Rio Guriú' },
-  { i: '/assets/tour-leste.png', caption: 'Passeio Leste' }, { i: '/assets/tour-extremo-leste.png', caption: 'Extremo Leste' },
-  { i: '/assets/tour-oeste.png', caption: 'Passeio Oeste' }, { i: '/assets/tour-extremo-oeste.png', caption: 'Extremo Oeste' },
-  { i: '/assets/transfer-aeroporto.png', caption: 'Translado aeroporto' }, { i: '/assets/transfer-fortaleza.png', caption: 'Translado Fortaleza' },
+  { v: A + 'wm-video-1.mp4', caption: 'Dunas de Jericoacoara' }, { i: A + 'wm-foto-1.jpeg', caption: 'Pôr do sol na praia' },
+  { v: A + 'wm-video-2.mp4', caption: 'A caminho' }, { i: A + 'wm-foto-3.jpeg', caption: 'Moradores locais' },
+  { v: A + 'wm-video-3.mp4', caption: 'Beira-mar' }, { i: A + 'wm-foto-2.jpeg', caption: 'Fim de tarde' },
+  { v: A + 'wm-video-4.mp4', caption: 'Balsa do Rio Guriú' },
+  { i: A + 'tour-leste.png', caption: 'Passeio Leste' }, { i: A + 'tour-extremo-leste.png', caption: 'Extremo Leste' },
+  { i: A + 'tour-oeste.png', caption: 'Passeio Oeste' }, { i: A + 'tour-extremo-oeste.png', caption: 'Extremo Oeste' },
+  { i: A + 'transfer-aeroporto.png', caption: 'Translado aeroporto' }, { i: A + 'transfer-fortaleza.png', caption: 'Translado Fortaleza' },
 ];
