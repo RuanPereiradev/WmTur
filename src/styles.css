@@ -262,6 +262,25 @@ button { font: inherit; color: inherit; }
   .lb { padding: 56px 0 0; } .lb-nav { display: none; } .lb-post { width: 100%; }
 }
 
+/* ===== 11b. Rodapé ===== */
+.site-footer { background: var(--color-text); color: var(--color-bg); }
+.site-footer a { color: var(--color-bg); text-decoration: none; } .site-footer a:not(.btn):hover { color: var(--color-accent-300); }
+.ft-top { display: grid; grid-template-columns: minmax(0,1.4fr) repeat(3, minmax(0,1fr)); gap: 40px clamp(24px,4vw,56px); padding: clamp(48px,6vw,80px) 0 clamp(36px,5vw,56px); }
+.ft-brand { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
+.ft-brand .logo { font-size: clamp(32px,4vw,48px); }
+.ft-brand p { margin: 0; max-width: 34ch; font-size: 16px; line-height: 1.55; color: var(--color-neutral-300); }
+.ft-col h3 { margin: 0 0 14px; font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--color-accent-300); }
+.ft-col ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 16px; }
+.ft-col li { color: var(--color-neutral-300); white-space: nowrap; } .ft-col li a { font-weight: 600; }
+.ft-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 24px; padding: 18px 88px 18px 0; border-top: 2px solid var(--color-neutral-800); font-size: 13px; color: var(--color-neutral-500); }
+.ft-bottom .ft-dev { display: inline-flex; align-items: center; gap: 6px; color: var(--color-neutral-500); }
+.ft-bottom .ft-dev:hover { color: var(--color-bg); }
+@media (max-width: 900px) {
+  .ft-top { grid-template-columns: minmax(0,1fr) minmax(0,1fr); }
+  .ft-brand { grid-column: 1 / -1; }
+  .ft-bottom { flex-direction: column; align-items: flex-start; padding: 18px 0 96px; } /* espaço para o botão flutuante do WhatsApp */
+}
+
 /* ===== 12. Animações ===== */
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes bounce { 0%,100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-3.5%) rotate(-1.2deg); } }
