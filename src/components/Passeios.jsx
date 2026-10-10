@@ -17,7 +17,7 @@ export default function Passeios() {
       <div className="tour-grid">
         {TOURS.map((x, i) => (
           <button key={x.name} className={'tour-card' + (i === t ? ' is-on' : '')} onClick={() => setT(i)}>
-            <span className="tour-img"><img src={x.img} alt={x.name} /><span className="tour-num">{String(i + 1).padStart(2, '0')}</span></span>
+            <span className="tour-img"><img src={x.img} alt={x.name} loading="lazy" decoding="async" /><span className="tour-num">{String(i + 1).padStart(2, '0')}</span></span>
             <span className="tour-body">
               <strong>{x.name}</strong>
               <span>{x.dur} · {x.places.length} paradas</span>

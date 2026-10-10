@@ -23,7 +23,7 @@ export default function Lightbox({ index, list, setIndex }) {
       <article className="lb-post" onClick={(e) => e.stopPropagation()}>
         <header><span className="lb-av">WM</span><span><b>{igHandle()}</b><small>Jericoacoara, Ceará</small></span><em>{pos + 1} / {list.length}</em></header>
         <div className="lb-media">
-          {g.v ? <video key={g.v} src={g.v} controls autoPlay playsInline loop /> : <img key={g.i} src={g.i} alt={g.caption} onDoubleClick={() => !liked[index] && like()} />}
+          {g.v ? <video key={g.v} src={g.v} poster={g.p} controls autoPlay playsInline loop /> : <img key={g.i} src={g.i} alt={g.caption} onDoubleClick={() => !liked[index] && like()} />}
         </div>
         <div className="lb-actions">
           <button onClick={like} aria-label="Curtir" className={liked[index] ? 'is-liked' : ''} style={{ transform: pop ? 'scale(1.25)' : 'none' }}>

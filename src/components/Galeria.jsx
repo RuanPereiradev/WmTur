@@ -9,14 +9,14 @@ import { useMobile } from '../hooks.js';
 const TABS = [['all', 'Publicações', 'M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z'], ['v', 'Vídeos', 'M8 5v14l11-7z'], ['i', 'Fotos', 'M4 5h16v14H4zM4 15l5-5 4 4 3-3 4 4']];
 const HL = [['#passeios', 'Passeios', 'Tour', 'accent'], ['#translados', 'Translados', 'Ida', 'dark'], ['#frota', 'Frota', '4x4', 'light'], ['#topo', 'Reservar', 'Jeri', 'accent']];
 
-// Vídeo da grade: toca sozinho (mudo) só quando aparece na tela
-function AutoVideo({ src }) {
+// Vídeo da grade: mostra a capa e só baixa/toca (mudo) quando aparece na tela
+function AutoVideo({ src, poster }) {
   const ref = useRef();
   useEffect(() => {
     const v = ref.current; const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { v.muted = true; v.play().catch(() => {}); } else v.pause(); }, { threshold: .25 });
     io.observe(v); return () => io.disconnect();
   }, []);
-  return <video ref={ref} src={src} muted loop playsInline preload="metadata" />;
+  return <video ref={ref} src={src} poster={poster} muted loop playsInline preload="none" />;
 }
 
 export default function Galeria() {
@@ -51,7 +51,7 @@ export default function Galeria() {
         <div className="ig-grid">
           {vis.map(i => { const g = GALLERY[i]; return (
             <button key={g.v || g.i} className="ig-tile" onClick={() => setOpen(i)} aria-label={'Abrir ' + g.caption}>
-              {g.v ? <AutoVideo src={g.v} /> : <img src={g.i} alt={g.caption} loading="lazy" />}
+              {g.v ? <AutoVideo src={g.v} poster={g.p} /> : <img src={g.i} alt={g.caption} loading="lazy" decoding="async" />}
               <span className="ig-badge"><svg width="20" height="20" viewBox="0 0 24 24" fill={g.v ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2"><path d={g.v ? 'M8 5v14l11-7z' : 'M4 5h16v14H4zM4 15l5-5 4 4 3-3 4 4'} /></svg></span>
             </button>
           ); })}
