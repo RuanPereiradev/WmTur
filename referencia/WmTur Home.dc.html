@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/modernist-5d4435e2-83e3-4dc4-99ef-61aa7c461c86/styles.css">
+  <script src="_ds/modernist-5d4435e2-83e3-4dc4-99ef-61aa7c461c86/_ds_bundle.js"></script>
+    <style>
+    html, body { margin: 0; background: var(--color-bg); color: var(--color-text); font-family: var(--font-body); -webkit-font-smoothing: antialiased; text-wrap: pretty; }
+    * { box-sizing: border-box; }
+    a { color: var(--color-accent-700); } a:not(.btn):hover { color: var(--color-accent); }
+    a.btn-primary, a.btn-primary:hover, a.btn-primary:active { color: var(--color-bg); }
+    @keyframes lcSpin { to { transform: rotate(360deg); } }
+    @keyframes lcBounce { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-3.5%) rotate(-1.2deg); } }
+    @keyframes lcTilt { 0%,100% { transform: rotate(-1.6deg) translateY(0); } 50% { transform: rotate(1.8deg) translateY(-5px); } }
+    @keyframes lcDune { to { transform: translateX(-50%); } }
+    @keyframes lcTicks { to { background-position: -96px 0; } }
+    @keyframes lcDust { 0% { transform: translate(0,0) scale(1); opacity: .95; } 100% { transform: translate(var(--dx), var(--dy)) scale(.2); opacity: 0; } }
+    @keyframes lcWind { 0% { transform: translateX(0); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateX(-70vw); opacity: 0; } }
+    @keyframes lcShimmer { 0%,100% { transform: scaleX(1); } 50% { transform: scaleX(.55); } }
+    @keyframes lcFoam { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-30px,4px); } }
+    @keyframes lcGull { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-16px,-7px); } }
+    @keyframes hZoom { from { transform: scale(1.02); } to { transform: scale(1.12); } }
+    @keyframes hFill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+    @keyframes hPulse { 0% { transform: scale(1); opacity: .6; } 100% { transform: scale(1.9); opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+  </style>
+</helmet>
+
+<sc-if value="{{ showLoader }}" hint-placeholder-val="{{ true }}">
+<div aria-hidden="true" data-screen-label="Carregamento" style="position: fixed; inset: 0; z-index: 100; background: var(--color-bg); display: flex; flex-direction: column; transform: {{ panelT }}; transition: {{ panelTr }};">
+  <header style="display: flex; justify-content: space-between; align-items: baseline; gap: 24px; margin: 0 clamp(20px,4vw,48px); padding: clamp(18px,3vw,32px) 0 14px; border-bottom: 2px solid var(--color-text); white-space: nowrap;">
+    <span style="font-family: var(--font-heading); font-weight: 800; font-size: 22px; letter-spacing: -0.02em;">WM TUR<span style="color: var(--color-accent);">.</span></span>
+    <span style="font-size: 15px; font-weight: 600;">Passeios 4x4 em Jericoacoara</span>
+  </header>
+  <div style="position: relative; flex: 1; min-height: 240px; overflow: hidden;">{{ scene }}</div>
+  <footer style="padding: 0 clamp(20px,4vw,48px) clamp(20px,3.5vw,40px);">
+    <div style="position: relative; height: 10px;">
+      <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--color-text);"></div>
+      <div style="position: absolute; left: 0; top: 0; bottom: 0; width: {{ barW }}; background: var(--color-accent);"></div>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px 32px; padding-top: 18px;">
+      <div style="font-family: var(--font-heading); font-weight: 800; font-size: clamp(88px, 15vw, 200px); line-height: .82; letter-spacing: -0.06em; font-variant-numeric: tabular-nums;">{{ pct }}<span style="color: var(--color-accent); font-size: .42em; letter-spacing: -0.02em;">%</span></div>
+      <div style="display: flex; flex-direction: column; gap: 6px; padding-bottom: 6px; min-width: 220px;">
+        <span style="font-size: 15px; font-weight: 700; color: var(--color-accent-700);">Carregando</span>
+        <span style="font-family: var(--font-heading); font-weight: 800; font-size: clamp(22px, 2.4vw, 32px); letter-spacing: -0.03em; line-height: 1.05;">{{ step }}</span>
+      </div>
+    </div>
+  </footer>
+</div>
+</sc-if>
+
+<header class="nav" style="position: sticky; top: 0; z-index: 30; background: var(--color-bg); display: flex; align-items: center; gap: 28px; padding: {{ headPad }} clamp(20px,4vw,48px); border-bottom: 2px solid var(--color-text); transition: padding .25s ease;">
+  <a href="#topo" aria-label="WM TUR, voltar ao topo" style="text-decoration: none; color: var(--color-text); margin-right: auto; display: flex; align-items: center; gap: 12px; white-space: nowrap;">
+    {{ logoCar }}
+    <span style="font-family: var(--font-heading); font-weight: 800; font-size: 24px; letter-spacing: -0.02em; line-height: 1;">WM TUR<span style="color: var(--color-accent);">.</span></span>
+    <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}"><span style="font-size: 14px; font-weight: 600; color: var(--color-neutral-700);">#vemprajeri</span></sc-if>
+  </a>
+  <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+    <nav style="display: flex; gap: 28px; font-size: 15px; font-weight: 600; white-space: nowrap;">
+      <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="4">
+        <a href="{{ n.href }}" style="text-decoration: none; color: {{ n.color }}; padding: 8px 0 6px; border-bottom: 2px solid {{ n.bar }}; transition: color .2s, border-color .2s;" style-hover="color: var(--color-accent); border-bottom-color: var(--color-accent);">{{ n.label }}</a>
+      </sc-for>
+    </nav>
+  </sc-if>
+  <a class="btn btn-primary" href="{{ waGeneral }}" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: 10px; text-decoration: none; white-space: nowrap; color: var(--color-bg); background-color: var(--color-accent); background-image: linear-gradient(90deg, #128c4a 0%, #1fae5b 40%, var(--color-accent) 60%, var(--color-accent) 100%); background-size: 260% 100%; background-position: 100% 0; transition: background-position .32s ease-out;" style-hover="background-position: 0% 0; color: var(--color-bg);" style-active="background-position: 0% 0; filter: brightness(.9); color: var(--color-bg);">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="{{ waPath }}"></path></svg>
+    {{ navCta }}
+  </a>
+</header>
+
+<main id="topo" data-screen-label="Hero" style="max-width: 1440px; margin: 0 auto; padding: 0 clamp(20px,4vw,48px);">
+  <section style="display: grid; grid-template-columns: {{ heroCols }}; border-bottom: 2px solid var(--color-text);">
+    <div style="padding: clamp(36px,6vw,80px) clamp(0px,3vw,48px) clamp(32px,4vw,56px) 0; display: flex; flex-direction: column; gap: 28px; justify-content: center; min-width: 0;">
+      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; opacity: {{ inOp }}; transition: opacity .6s .05s;">
+        <span class="tag tag-accent" style="flex: none; white-space: nowrap;">Reserva pelo WhatsApp</span>
+        <span style="font-size: 15px; font-weight: 600;">Passeios e translados em Jericoacoara</span>
+      </div>
+      <h1 style="margin: 0; font-family: var(--font-heading); font-weight: 800; font-size: clamp(50px, 7.4vw, 116px); line-height: .9; letter-spacing: -0.05em;">
+        <span style="display: block; overflow: hidden; padding-bottom: .06em;"><span style="display: block; transform: {{ inT }}; transition: transform .7s cubic-bezier(.2,.8,.2,1) .05s;">Jeri de um jeito</span></span>
+        <span style="display: block; overflow: hidden; padding-bottom: .06em;"><span style="display: block; transform: {{ inT }}; transition: transform .7s cubic-bezier(.2,.8,.2,1) .15s;">que você nunca</span></span>
+        <span style="display: block; overflow: hidden; padding-bottom: .08em;"><span style="display: block; color: var(--color-accent); transform: {{ inT }}; transition: transform .7s cubic-bezier(.2,.8,.2,1) .25s;">sonhou.</span></span>
+      </h1>
+      <p style="margin: 0; max-width: 46ch; font-size: clamp(17px,1.4vw,20px); line-height: 1.55; opacity: {{ inOp }}; transition: opacity .6s .35s;">Passeios de Jardineira ou SW4 por lagoas, dunas e off-road, e translados para o aeroporto, Fortaleza e Parnaíba. Há mais de 12 anos com segurança e uma experiência única em Jeri.</p>
+      <div style="display: flex; flex-wrap: wrap; gap: 12px; opacity: {{ inOp }}; transition: opacity .6s .45s;">
+        <a class="btn btn-primary" href="{{ waGeneral }}" target="_blank" rel="noopener" style="display: flex; justify-content: space-between; align-items: center; gap: 28px; min-width: 280px; padding: 20px 22px; font-size: 18px; text-decoration: none; white-space: nowrap; color: var(--color-bg); background-color: var(--color-accent); background-image: linear-gradient(90deg, #128c4a 0%, #1fae5b 40%, var(--color-accent) 60%, var(--color-accent) 100%); background-size: 260% 100%; background-position: 100% 0; transition: background-position .32s ease-out;" style-hover="background-position: 0% 0; color: var(--color-bg);" style-active="background-position: 0% 0; filter: brightness(.9); color: var(--color-bg);"><span>Reservar meu passeio</span><span>→</span></a>
+        <a class="btn btn-secondary" href="#passeios" style="display: flex; justify-content: space-between; align-items: center; gap: 28px; min-width: 200px; padding: 20px 22px; font-size: 18px; text-decoration: none; white-space: nowrap;"><span>Ver passeios</span><span>↓</span></a>
+      </div>
+    </div>
+
+    <div style="position: relative; border-left: {{ reelBorder }}; padding: clamp(20px,3vw,40px) 0 clamp(20px,3vw,40px) {{ reelPadL }}; display: flex; flex-direction: column; gap: 14px; min-width: 0;">
+      <div style="position: relative; width: 100%; aspect-ratio: 5 / 4; overflow: hidden; background: var(--color-text);">
+        {{ reelMedia }}
+        <div style="position: absolute; left: 14px; right: 14px; top: 14px; display: flex; gap: 6px; z-index: 2;">{{ reelBars }}</div>
+        <div style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; padding: 64px 18px 18px; background: linear-gradient(180deg, rgba(32,30,29,0) 0%, rgba(32,30,29,.85) 100%); color: var(--color-bg); display: flex; flex-direction: column; gap: 4px;">
+          <span style="font-size: 14px; font-weight: 600;">{{ reel.label }}</span>
+          <span style="font-family: var(--font-heading); font-weight: 800; font-size: clamp(24px,2.2vw,32px); letter-spacing: -0.03em; line-height: 1.05;">{{ reel.tour }}</span>
+        </div>
+      </div>
+      <a href="{{ reel.wa }}" target="_blank" rel="noopener" style="display: flex; flex-direction: column; align-items: stretch; gap: 6px; padding: 14px 12px; border-top: 2px solid var(--color-text); border-bottom: 2px solid var(--color-text); text-decoration: none; color: var(--color-text); background-color: transparent; background-image: linear-gradient(90deg, #128c4a 0%, #1fae5b 40%, transparent 60%, transparent 100%); background-size: 260% 100%; background-position: 100% 0; transition: background-position .32s ease-out, color .32s ease-out;" style-hover="background-position: 0% 0; color: var(--color-bg);" style-active="background-position: 0% 0; filter: brightness(.9); color: var(--color-bg);">
+        <span style="font-size: 15px; font-weight: 600;">{{ reel.priceLabel }}</span>
+        <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 14px; white-space: nowrap;"><span style="font-family: var(--font-heading); font-weight: 800; font-size: 26px; letter-spacing: -0.03em;">{{ reel.price }}</span><span style="font-weight: 700;">Reservar →</span></span>
+      </a>
+    </div>
+  </section>
+
+  <section aria-label="Destaques" style="display: grid; grid-template-columns: {{ statCols }}; border-bottom: 2px solid var(--color-text);">
+    <div style="padding: 22px 22px 22px 0; display: flex; flex-direction: column; gap: 6px;">
+      <span style="font-size: 14px; font-weight: 600; color: var(--color-accent-700);">Passeios a partir de</span>
+      <span style="font-family: var(--font-heading); font-weight: 800; font-size: clamp(32px,3.4vw,48px); letter-spacing: -0.04em; line-height: 1;">R$ 500</span>
+      <span style="font-size: 14px;">por carro</span>
+    </div>
+    <div style="padding: 22px; border-left: 2px solid var(--color-text); display: flex; flex-direction: column; gap: 6px;">
+      <span style="font-size: 14px; font-weight: 600; color: var(--color-accent-700);">Roteiros</span>
+      <span style="font-family: var(--font-heading); font-weight: 800; font-size: clamp(32px,3.4vw,48px); letter-spacing: -0.04em; line-height: 1;">4 + 1</span>
+      <span style="font-size: 14px;">Leste, Oeste, Extremos e personalizado</span>
+    </div>
+    <div style="padding: 22px; border-left: {{ statBorder3 }}; display: flex; flex-direction: column; gap: 6px;">
+      <span style="font-size: 14px; font-weight: 600; color: var(--color-accent-700);">Na Jardineira</span>
+      <span style="font-family: var(--font-heading); font-weight: 800; font-size: clamp(32px,3.4vw,48px); letter-spacing: -0.04em; line-height: 1;">12</span>
+      <span style="font-size: 14px;">pessoas por carro</span>
+    </div>
+    <div style="padding: 22px; border-left: 2px solid var(--color-text); display: flex; flex-direction: column; gap: 6px;">
+      <span style="font-size: 14px; font-weight: 600; color: var(--color-accent-700);">Em Jeri há</span>
+      <span style="font-family: var(--font-heading); font-weight: 800; font-size: clamp(32px,3.4vw,48px); letter-spacing: -0.04em; line-height: 1;">12+ anos</span>
+      <span style="font-size: 14px;">com Wilamar Cunha</span>
+    </div>
+  </section>
+
+  <section id="passeios" data-screen-label="Passeios" style="padding: clamp(56px,7vw,96px) 0; border-bottom: 2px solid var(--color-text); display: flex; flex-direction: column; gap: 28px;">
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px 40px;">
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <span style="font-size: 15px; font-weight: 700; color: var(--color-accent-700);">Passeios</span>
+        <h2 style="margin: 0; font-family: var(--font-heading); font-weight: 800; font-size: clamp(38px,5vw,72px); line-height: .92; letter-spacing: -0.045em;">Escolha seu<br>roteiro.</h2>
+      </div>
+      <p style="margin: 0; max-width: 40ch; font-size: 17px; line-height: 1.55;">Todos os passeios saem de Jericoacoara de Jardineira ou SW4. O valor é fechado por carro, não por pessoa.</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: {{ tourCols }}; border-top: 2px solid var(--color-text); border-left: 2px solid var(--color-text);">
+      <sc-for list="{{ tourCards }}" as="t" hint-placeholder-count="4">
+        <button type="button" onClick="{{ t.pick }}" style="font: inherit; color: var(--color-text); text-align: left; cursor: pointer; padding: 0; border: 0; border-right: 2px solid var(--color-text); border-bottom: 2px solid var(--color-text); background: {{ t.bg }}; display: flex; flex-direction: column;" style-hover="background: var(--color-accent-100);">
+          <span style="position: relative; display: block; aspect-ratio: 4 / 3; overflow: hidden; border-bottom: 2px solid var(--color-text);">
+            <img src="{{ t.img }}" alt="{{ t.name }}" style="display: block; width: 100%; height: 100%; object-fit: cover;">
+            <span style="position: absolute; left: 0; top: 0; background: {{ t.numBg }}; color: var(--color-bg); font-weight: 800; font-size: 14px; padding: 8px 12px;">{{ t.num }}</span>
+          </span>
+          <span style="padding: 18px 18px 20px; display: flex; flex-direction: column; gap: 12px; flex: 1;">
+            <span style="font-family: var(--font-heading); font-weight: 800; font-size: clamp(22px,2vw,28px); letter-spacing: -0.03em; line-height: 1;">{{ t.name }}</span>
+            <span style="font-size: 14px; line-height: 1.45;">{{ t.dur }} · {{ t.count }} paradas</span>
+            <span style="margin-top: auto; display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding-top: 12px; border-top: 2px solid var(--color-divider);">
+              <span style="font-family: var(--font-heading); font-weight: 800; font-size: 30px; letter-spacing: -0.04em; color: var(--color-accent);">{{ t.price }}</span>
+              <span style="font-size: 13px; font-weight: 600; white-space: nowrap;">por carro</span>
+            </span>
+          </span>
+        </button>
+      </sc-for>
+    </div>
+
+    <div style="display: grid; grid-template-columns: {{ detailCols }}; border: 2px solid var(--color-text);">
+      <div style="padding: clamp(20px,3vw,36px); display: flex; flex-direction: column; gap: 18px; min-width: 0;">
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px 20px;">
+          <h3 style="margin: 0; font-family: var(--font-heading); font-weight: 800; font-size: clamp(30px,3.4vw,48px); letter-spacing: -0.04em; line-height: 1;">{{ sel.name }}</h3>
+          <span style="font-size: 15px; font-weight: 600; white-space: nowrap;">Duração média: {{ sel.dur }}</span>
+        </div>
+        <ol style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); border-top: 2px solid var(--color-text);">
+          <sc-for list="{{ sel.places }}" as="p" hint-placeholder-count="6">
+            <li style="display: flex; align-items: baseline; gap: 14px; padding: 14px 16px 14px 0; border-bottom: 2px solid var(--color-divider); font-size: 17px; font-weight: 600;">
+              <span style="flex: none; font-size: 13px; font-weight: 800; color: var(--color-accent); min-width: 22px;">{{ p.n }}</span>{{ p.name }}
+            </li>
+          </sc-for>
+        </ol>
+      </div>
+      <div style="padding: clamp(20px,3vw,36px); border-left: {{ detailBorder }}; border-top: {{ detailBorderTop }}; background: var(--color-surface); display: flex; flex-direction: column; gap: 18px;">
+        <span style="font-size: 15px; font-weight: 700; color: var(--color-accent-700);">Escolha o carro</span>
+        <div style="display: flex; flex-direction: column; border-top: 2px solid var(--color-text);">
+          <sc-for list="{{ tourVehs }}" as="v" hint-placeholder-count="2">
+            <button type="button" onClick="{{ v.pick }}" style="font: inherit; color: var(--color-text); cursor: pointer; text-align: left; display: flex; align-items: center; gap: 14px; padding: 14px 0; border: 0; border-bottom: 2px solid var(--color-text); background: transparent;">
+              <span style="flex: none; width: 22px; height: 22px; border: 2px solid var(--color-text); display: grid; place-items: center;"><span style="width: 10px; height: 10px; background: {{ v.dot }};"></span></span>
+              <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;">
+                <span style="font-weight: 800; font-size: 18px;">{{ v.label }}</span>
+                <span style="font-size: 14px;">{{ v.sub }}</span>
+              </span>
+            </button>
+          </sc-for>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px; margin-top: auto;">
+          <span style="font-size: 14px; font-weight: 600;">Valor por carro</span>
+          <span style="font-family: var(--font-heading); font-weight: 800; font-size: clamp(48px,5vw,72px); letter-spacing: -0.05em; line-height: .9;">{{ sel.price }}</span>
+        </div>
+        <a class="btn btn-primary" href="{{ waSel }}" target="_blank" rel="noopener" style="display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 18px 20px; font-size: 17px; text-decoration: none; white-space: nowrap; color: var(--color-bg); background-color: var(--color-accent); background-image: linear-gradient(90deg, #128c4a 0%, #1fae5b 40%, var(--color-accent) 60%, var(--color-accent) 100%); background-size: 260% 100%; background-position: 100% 0; transition: background-position .32s ease-out, color .32s ease-out;" style-hover="background-position: 0% 0; color: var(--color-bg);" style-active="background-position: 0% 0; filter: brightness(.9); color: var(--color-bg);"><span>Reservar agora</span><span>→</span></a>
+      </div>
+    </div>
+
+    <a href="{{ waCustom }}" target="_blank" rel="noopener" style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px 32px; padding: clamp(22px,3vw,36px); color: var(--color-bg); text-decoration: none; background-color: var(--color-accent); background-image: linear-gradient(90deg, #128c4a 0%, #1fae5b 40%, var(--color-accent) 60%, var(--color-accent) 100%); background-size: 260% 100%; background-position: 100% 0; transition: background-position .32s ease-out, color .32s ease-out;" style-hover="background-position: 0% 0; color: var(--color-bg);" style-active="background-position: 0% 0; filter: brightness(.9); color: var(--color-bg);">
+      <span style="display: flex; flex-direction: column; gap: 8px; max-width: 640px;">
+        <span style="font-family: var(--font-heading); font-weight: 800; font-size: clamp(30px,3.6vw,52px); letter-spacing: -0.04em; line-height: .95;">Passeio personalizado</span>
+        <span style="font-size: 17px; line-height: 1.5;">Você escolhe os lugares, o ritmo e o horário. É só dizer onde quer ir.</span>
+      </span>
+      <span style="display: flex; justify-content: space-between; align-items: center; gap: 24px; min-width: 240px; padding: 16px 20px; background: var(--color-bg); color: var(--color-text); font-weight: 700; font-size: 17px; white-space: nowrap;"><span>Montar meu roteiro</span><span>→</span></span>
+    </a>
+  </section>
+
+  <section id="translados" data-screen-label="Translados" style="padding: clamp(56px,7vw,96px) 0; border-bottom: 2px solid var(--color-text); display: flex; flex-direction: column; gap: 28px;">
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px 40px;">
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <span style="font-size: 15px; font-weight: 700; color: var(--color-accent-700);">Translados</span>
+        <h2 style="margin: 0; font-family: var(--font-heading); font-weight: 800; font-size: clamp(38px,5vw,72px); line-height: .92; letter-spacing: -0.045em;">Porta a porta.</h2>
+      </div>
+      <p style="margin: 0; max-width: 40ch; font-size: 17px; line-height: 1.55;">SW4 e Picape com valor por veículo. No compartilhado, o valor é por pessoa.</p>
+    </div>
+    <div style="overflow-x: auto;">
+      <table class="table" style="width: 100%; min-width: 640px; border-collapse: collapse; font-size: 17px;">
+        <thead>
+          <tr style="border-top: 2px solid var(--color-text); border-bottom: 2px solid var(--color-text);">
+            <th style="text-align: left; padding: 14px 12px 14px 0; vertical-align: bottom; text-transform: none; letter-spacing: normal; font-family: var(--font-body); background: transparent; color: var(--color-text);"><span style="display: block; font-weight: 800; font-size: 17px;">Rota</span></th>
+            <th style="text-align: left; padding: 14px 12px; vertical-align: bottom; text-transform: none; letter-spacing: normal; font-family: var(--font-body); background: transparent; color: var(--color-text);"><span style="display: block; font-weight: 800; font-size: 17px;">SW4</span><span style="display: block; font-weight: 500; font-size: 14px; margin-top: 2px;">Até 6 pessoas</span></th>
+            <th style="text-align: left; padding: 14px 12px; vertical-align: bottom; text-transform: none; letter-spacing: normal; font-family: var(--font-body); background: transparent; color: var(--color-text);"><span style="display: block; font-weight: 800; font-size: 17px;">Picape</span><span style="display: block; font-weight: 500; font-size: 14px; margin-top: 2px;">Até 4 pessoas</span></th>
+            <th style="text-align: left; padding: 14px 12px; vertical-align: bottom; text-transform: none; letter-spacing: normal; font-family: var(--font-body); background: transparent; color: var(--color-text);"><span style="display: block; font-weight: 800; font-size: 17px;">Compartilhado</span><span style="display: block; font-weight: 500; font-size: 14px; margin-top: 2px;">Valor por pessoa</span></th>
+            <th style="padding: 14px 0; background: transparent;"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <sc-for list="{{ routeRows }}" as="r" hint-placeholder-count="4">
+            <tr style="border-bottom: 2px solid var(--color-divider);">
+              <td style="padding: 18px 12px 18px 0; font-family: var(--font-heading); font-weight: 800; font-size: 20px; letter-spacing: -0.02em; white-space: nowrap;">{{ r.name }}</td>
+              <td style="padding: 18px 12px; font-weight: 700; white-space: nowrap;">{{ r.sw4 }}</td>
+              <td style="padding: 18px 12px; font-weight: 700; white-space: nowrap;">{{ r.picape }}</td>
+              <td style="padding: 18px 12px; font-weight: 700; white-space: nowrap; color: var(--color-accent-700);">{{ r.comp }}</td>
+              <td style="padding: 18px 0; text-align: right;"><a href="{{ r.wa }}" target="_blank" rel="noopener" style="display: inline-block; padding: 10px 14px; font-weight: 700; text-decoration: none; white-space: nowrap; color: var(--color-text); border: 2px solid var(--color-text); background-color: transparent; background-image: linear-gradient(90deg, #128c4a 0%, #1fae5b 40%, transparent 60%, transparent 100%); background-size: 260% 100%; background-position: 100% 0; transition: background-position .32s ease-out, color .32s ease-out;" style-hover="background-position: 0% 0; color: var(--color-bg); border-color: #128c4a;" style-active="background-position: 0% 0; filter: brightness(.9); color: var(--color-bg);">Agendar →</a></td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="frota" data-screen-label="Frota" style="padding: clamp(56px,7vw,96px) 0; border-bottom: 2px solid var(--color-text); display: flex; flex-direction: column; gap: 28px;">
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <span style="font-size: 15px; font-weight: 700; color: var(--color-accent-700);">Nossos transportes</span>
+      <h2 style="margin: 0; font-family: var(--font-heading); font-weight: 800; font-size: clamp(38px,5vw,72px); line-height: .92; letter-spacing: -0.045em;">Um carro para<br>cada grupo.</h2>
+    </div>
+    <div style="display: grid; grid-template-columns: {{ fleetCols }}; border-top: 2px solid var(--color-text); border-left: 2px solid var(--color-text);">
+      <div style="padding: clamp(20px,2.6vw,32px); border-right: 2px solid var(--color-text); border-bottom: 2px solid var(--color-text); display: flex; flex-direction: column; gap: 10px;">
+        <span style="font-family: var(--font-heading); font-weight: 800; font-size: clamp(64px,7vw,104px); letter-spacing: -0.06em; line-height: .85; color: var(--color-accent);">4</span>
+        <span style="font-weight: 800; font-size: 22px;">Picape</span>
+        <span style="font-size: 16px; line-height: 1.5;">Até 4 pessoas. Para casal ou família pequena, nos translados.</span>
+      </div>
+      <div style="padding: clamp(20px,2.6vw,32px); border-right: 2px solid var(--color-text); border-bottom: 2px solid var(--color-text); display: flex; flex-direction: column; gap: 10px;">
+        <span style="font-family: var(--font-heading); font-weight: 800; font-size: clamp(64px,7vw,104px); letter-spacing: -0.06em; line-height: .85; color: var(--color-accent);">6</span>
+        <span style="font-weight: 800; font-size: 22px;">Toyota SW4</span>
+        <span style="font-size: 16px; line-height: 1.5;">Até 6 pessoas. Fechada e confortável, nos passeios e translados.</span>
+      </div>
+      <div style="padding: clamp(20px,2.6vw,32px); border-right: 2px solid var(--color-text); border-bottom: 2px solid var(--color-text); display: flex; flex-direction: column; gap: 10px; background: var(--color-text); color: var(--color-bg);">
+        <span style="font-family: var(--font-heading); font-weight: 800; font-size: clamp(64px,7vw,104px); letter-spacing: -0.06em; line-height: .85; color: var(--color-accent);">12</span>
+        <span style="font-weight: 800; font-size: 22px;">Jardineira</span>
+        <span style="font-size: 16px; line-height: 1.5;">Até 12 pessoas. Aberta, vento no rosto, a cara de Jeri.</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="galeria" data-screen-label="Galeria" style="padding: clamp(56px,7vw,96px) 0; border-bottom: 2px solid var(--color-text);">
+    <div style="max-width: 940px; margin: 0 auto; display: flex; flex-direction: column; gap: 0;">
+      <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+      <div style="display: grid; grid-template-columns: {{ igHeadCols }}; gap: 20px clamp(20px,5vw,72px); align-items: center; padding: 0 clamp(0px,2vw,24px) 28px;">
+        <div style="justify-self: center; width: {{ igAvatar }}; height: {{ igAvatar }}; border-radius: 50%; padding: 4px; background: var(--color-accent);">
+          <div style="width: 100%; height: 100%; border-radius: 50%; background: var(--color-bg); border: 3px solid var(--color-bg); display: grid; place-items: center; overflow: hidden;">{{ avatarCar }}</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 16px; min-width: 0;">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px;">
+            <span style="font-size: 22px; font-weight: 600; margin-right: 6px;">{{ igHandleBare }}</span>
+            <a href="{{ instagram }}" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: 8px; padding: 9px 16px; background: var(--color-text); color: var(--color-bg); text-decoration: none; font-weight: 700; font-size: 15px; white-space: nowrap;" style-hover="background: var(--color-accent); color: var(--color-bg);">Seguir</a>
+            <a href="{{ waGallery }}" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: 8px; padding: 9px 16px; color: var(--color-bg); text-decoration: none; font-weight: 700; font-size: 15px; white-space: nowrap; background-color: var(--color-accent); background-image: linear-gradient(90deg, #128c4a 0%, #1fae5b 40%, var(--color-accent) 60%, var(--color-accent) 100%); background-size: 260% 100%; background-position: 100% 0; transition: background-position .32s ease-out, color .32s ease-out;" style-hover="background-position: 0% 0; color: var(--color-bg);" style-active="background-position: 0% 0; filter: brightness(.9); color: var(--color-bg);">Mensagem</a>
+          </div>
+          <div style="display: flex; gap: clamp(18px,4vw,40px); font-size: 16px;">
+            <span><strong style="font-weight: 800;">{{ igPosts }}</strong> publicações</span>
+            <span><strong style="font-weight: 800;">4</strong> roteiros</span>
+            <span><strong style="font-weight: 800;">12+</strong> anos em Jeri</span>
+          </div>
+          <div style="font-size: 15px; line-height: 1.5;">
+            <div style="font-weight: 700;">WmTur · Passeios em Jericoacoara</div>
+            <div>Jardineira e SW4 por lagoas, dunas e off-road</div>
+            <div>Translados aeroporto · Fortaleza · Parnaíba</div>
+            <div style="color: var(--color-accent-700); font-weight: 600;">#vemprajeri</div>
+          </div>
+        </div>
+      </div>
+
+      </sc-if>
+      <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; flex-direction: column; gap: 14px; padding: 0 0 22px;">
+        <div style="font-size: 20px; font-weight: 700;">{{ igHandleBare }}</div>
+        <div style="display: flex; align-items: center; gap: 18px;">
+          <div style="flex: none; width: 86px; height: 86px; border-radius: 50%; padding: 3px; background: var(--color-accent);">
+            <div style="width: 100%; height: 100%; border-radius: 50%; background: var(--color-bg); border: 3px solid var(--color-bg); display: grid; place-items: center; overflow: hidden;">{{ avatarCar }}</div>
+          </div>
+          <div style="flex: 1; min-width: 0; display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); text-align: center;">
+            <div style="display: flex; flex-direction: column; gap: 2px;"><strong style="font-size: 18px; font-weight: 800;">{{ igPosts }}</strong><span style="font-size: 13px;">publicações</span></div>
+            <div style="display: flex; flex-direction: column; gap: 2px;"><strong style="font-size: 18px; font-weight: 800;">4</strong><span style="font-size: 13px;">roteiros</span></div>
+            <div style="display: flex; flex-direction: column; gap: 2px;"><strong style="font-size: 18px; font-weight: 800;">12+</strong><span style="font-size: 13px;">anos em Jeri</span></div>
+          </div>
+        </div>
+        <div style="font-size: 14px; line-height: 1.5;">
+          <div style="font-weight: 700;">WmTur · Passeios em Jericoacoara</div>
+          <div>Jardineira e SW4 por lagoas, dunas e off-road</div>
+          <div>Translados aeroporto · Fortaleza · Parnaíba</div>
+          <div style="color: var(--color-accent-700); font-weight: 600;">#vemprajeri</div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px;">
+          <a href="{{ instagram }}" target="_blank" rel="noopener" style="display: flex; align-items: center; justify-content: center; min-height: 44px; background: var(--color-text); color: var(--color-bg); text-decoration: none; font-weight: 700; font-size: 15px;" style-hover="background: var(--color-accent); color: var(--color-bg);">Seguir</a>
+          <a href="{{ waGallery }}" target="_blank" rel="noopener" style="display: flex; align-items: center; justify-content: center; min-height: 44px; color: var(--color-bg); text-decoration: none; font-weight: 700; font-size: 15px; background-color: var(--color-accent); background-image: linear-gradient(90deg, #128c4a 0%, #1fae5b 40%, var(--color-accent) 60%, var(--color-accent) 100%); background-size: 260% 100%; background-position: 100% 0; transition: background-position .32s ease-out, color .32s ease-out;" style-hover="background-position: 0% 0; color: var(--color-bg);" style-active="background-position: 0% 0; filter: brightness(.9); color: var(--color-bg);">Mensagem</a>
+        </div>
+      </div>
+      </sc-if>
+      <div style="display: flex; gap: clamp(14px,3vw,28px); padding: 4px clamp(0px,2vw,24px) 24px; overflow-x: auto; scrollbar-width: none;">
+        <sc-for list="{{ igHighlights }}" as="hl" hint-placeholder-count="4">
+          <a href="{{ hl.href }}" style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 8px; text-decoration: none; color: var(--color-text); font-size: 13px; font-weight: 600;" style-hover="color: var(--color-accent);">
+            <span style="width: 72px; height: 72px; border-radius: 50%; border: 2px solid var(--color-neutral-300); padding: 3px;">
+              <span style="display: grid; place-items: center; width: 100%; height: 100%; border-radius: 50%; background: {{ hl.bg }}; color: {{ hl.fg }}; font-family: var(--font-heading); font-weight: 800; font-size: 15px; letter-spacing: -0.02em;">{{ hl.short }}</span>
+            </span>
+            {{ hl.label }}
+          </a>
+        </sc-for>
+      </div>
+
+      <div style="display: flex; justify-content: center; gap: clamp(28px,6vw,60px); border-top: 2px solid var(--color-text);">
+        <sc-for list="{{ igTabs }}" as="tb" hint-placeholder-count="3">
+          <button type="button" onClick="{{ tb.pick }}" style="font: inherit; cursor: pointer; background: transparent; border: 0; border-top: 2px solid {{ tb.bar }}; margin-top: -2px; padding: 14px 2px; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: {{ tb.color }};">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="{{ tb.icon }}"></path></svg>{{ tb.label }}
+          </button>
+        </sc-for>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 3px;">
+        <sc-for list="{{ igGrid }}" as="g" hint-placeholder-count="9">
+          <sc-if value="{{ g.isMedia }}" hint-placeholder-val="{{ true }}">
+            <button type="button" onClick="{{ g.open }}" aria-label="Abrir {{ g.caption }}" style="font: inherit; cursor: pointer; padding: 0; position: relative; display: block; aspect-ratio: 3 / 4; overflow: hidden; border: 0; background: var(--color-text); color: var(--color-bg);" style-hover="filter: brightness(.82);">
+              {{ g.media }}
+              <span style="position: absolute; right: 8px; top: 8px; color: var(--color-bg); filter: drop-shadow(0 1px 2px rgba(0,0,0,.5));">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="{{ g.iconFill }}" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="{{ g.icon }}"></path></svg>
+              </span>
+            </button>
+          </sc-if>
+          <sc-if value="{{ g.isCta }}" hint-placeholder-val="{{ false }}">
+            <a href="{{ waGallery }}" target="_blank" rel="noopener" style="position: relative; display: flex; flex-direction: column; justify-content: space-between; aspect-ratio: 3 / 4; padding: clamp(12px,2vw,22px); color: var(--color-bg); text-decoration: none; background-color: var(--color-accent); background-image: linear-gradient(90deg, #128c4a 0%, #1fae5b 40%, var(--color-accent) 60%, var(--color-accent) 100%); background-size: 260% 100%; background-position: 100% 0; transition: background-position .32s ease-out, color .32s ease-out;" style-hover="background-position: 0% 0; color: var(--color-bg);" style-active="background-position: 0% 0; filter: brightness(.9); color: var(--color-bg);">
+              <span style="font-family: var(--font-heading); font-weight: 800; font-size: clamp(18px,2.4vw,32px); line-height: .95; letter-spacing: -0.04em;">Seu passeio pode ser o próximo.</span>
+              <span style="font-weight: 700; font-size: clamp(13px,1.4vw,16px); white-space: nowrap;">Reservar →</span>
+            </a>
+          </sc-if>
+          <sc-if value="{{ g.isIg }}" hint-placeholder-val="{{ false }}">
+            <a href="{{ instagram }}" target="_blank" rel="noopener" style="position: relative; display: flex; flex-direction: column; justify-content: space-between; aspect-ratio: 3 / 4; padding: clamp(12px,2vw,22px); background: var(--color-text); color: var(--color-bg); text-decoration: none;" style-hover="background: var(--color-neutral-800); color: var(--color-bg);">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"></circle></svg>
+              <span style="display: flex; flex-direction: column; gap: 6px;">
+                <span style="font-family: var(--font-heading); font-weight: 800; font-size: clamp(18px,2.4vw,32px); line-height: .95; letter-spacing: -0.04em;">Ver mais no Instagram</span>
+                <span style="font-weight: 600; font-size: clamp(12px,1.3vw,15px); color: var(--color-accent-300);">{{ igHandle }}</span>
+              </span>
+            </a>
+          </sc-if>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+</main>
+
+<sc-if value="{{ lbOpen }}" hint-placeholder-val="{{ false }}">
+  <div role="dialog" aria-modal="true" aria-label="{{ lb.caption }}" onClick="{{ lbClose }}" style="position: fixed; inset: 0; z-index: 120; background: rgba(20,19,18,.88); display: flex; align-items: center; justify-content: center; gap: 14px; padding: {{ lbPad }};">
+    <button type="button" onClick="{{ lbClose }}" aria-label="Fechar" style="font: inherit; cursor: pointer; position: absolute; right: 14px; top: 14px; z-index: 2; width: 44px; height: 44px; border: 0; background: transparent; color: var(--color-bg); display: grid; place-items: center;">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+    </button>
+    <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+      <button type="button" onClick="{{ lbPrev }}" aria-label="Anterior" style="font: inherit; cursor: pointer; flex: none; width: 40px; height: 40px; border-radius: 50%; border: 0; background: var(--color-bg); color: var(--color-text); font-size: 18px; font-weight: 800;">←</button>
+    </sc-if>
+    <article onClick="{{ stop }}" style="width: {{ lbW }}; max-height: 100%; background: var(--color-bg); display: flex; flex-direction: column; overflow: hidden;">
+      <header style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-bottom: 1px solid var(--color-divider);">
+        <span style="width: 36px; height: 36px; border-radius: 50%; padding: 2px; background: var(--color-accent); flex: none;"><span style="display: grid; place-items: center; width: 100%; height: 100%; border-radius: 50%; background: var(--color-bg); border: 2px solid var(--color-bg); font-family: var(--font-heading); font-weight: 800; font-size: 11px;">WM</span></span>
+        <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.2;">
+          <span style="font-weight: 700; font-size: 14px;">{{ igHandleBare }}</span>
+          <span style="font-size: 12px;">Jericoacoara, Ceará</span>
+        </span>
+        <span style="font-size: 13px; font-weight: 600; color: var(--color-neutral-600); white-space: nowrap;">{{ lb.pos }}</span>
+      </header>
+      <div style="position: relative; background: #000; display: flex; align-items: center; justify-content: center; flex: 1; min-height: 0; aspect-ratio: 3 / 4; max-height: {{ lbMediaMax }};">{{ lbMedia }}</div>
+      <div style="padding: 10px 14px 14px; display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <button type="button" onClick="{{ lbLike }}" aria-label="Curtir" style="font: inherit; cursor: pointer; border: 0; background: transparent; padding: 4px; color: {{ lb.likeColor }}; transform: scale({{ lb.likeScale }}); transition: transform .18s ease-out;">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="{{ lb.likeFill }}" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20.5S3.5 15.2 3.5 9.2A4.7 4.7 0 0 1 12 6.6a4.7 4.7 0 0 1 8.5 2.6c0 6-8.5 11.3-8.5 11.3Z"></path></svg>
+          </button>
+          <a href="{{ lb.wa }}" target="_blank" rel="noopener" aria-label="Perguntar no WhatsApp" style="padding: 4px; color: var(--color-text); display: grid;" style-hover="color: #1fae5b;">
+            <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M20.5 11.6a8.5 8.5 0 0 1-12.3 7.6L3.5 20.5l1.4-4.5A8.5 8.5 0 1 1 20.5 11.6Z"></path></svg>
+          </a>
+          <a href="{{ instagram }}" target="_blank" rel="noopener" aria-label="Abrir Instagram" style="padding: 4px; color: var(--color-text); display: grid;" style-hover="color: var(--color-accent);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M21 3 10 14M21 3l-7 18-4-7-7-4 18-7Z"></path></svg>
+          </a>
+          <a href="{{ lb.wa }}" target="_blank" rel="noopener" style="margin-left: auto; padding: 9px 14px; color: var(--color-bg); text-decoration: none; font-weight: 700; font-size: 14px; white-space: nowrap; background-color: var(--color-accent); background-image: linear-gradient(90deg, #128c4a 0%, #1fae5b 40%, var(--color-accent) 60%, var(--color-accent) 100%); background-size: 260% 100%; background-position: 100% 0; transition: background-position .32s ease-out, color .32s ease-out;" style-hover="background-position: 0% 0; color: var(--color-bg);" style-active="background-position: 0% 0; filter: brightness(.9); color: var(--color-bg);">Reservar →</a>
+        </div>
+        <div style="font-size: 14px; line-height: 1.45;"><strong style="font-weight: 700;">{{ igHandleBare }}</strong> {{ lb.caption }} <span style="color: var(--color-accent-700); font-weight: 600;">#vemprajeri</span></div>
+      </div>
+    </article>
+    <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+      <button type="button" onClick="{{ lbNext }}" aria-label="Próximo" style="font: inherit; cursor: pointer; flex: none; width: 40px; height: 40px; border-radius: 50%; border: 0; background: var(--color-bg); color: var(--color-text); font-size: 18px; font-weight: 800;">→</button>
+    </sc-if>
+  </div>
+</sc-if>
+
+{{ floatBtn }}
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;whatsapp&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;558896449185&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Vendas&quot;},&quot;loader&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Carregamento&quot;},&quot;loaderDuration&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:0.6,&quot;max&quot;:3,&quot;step&quot;:0.1,&quot;unit&quot;:&quot;s&quot;,&quot;default&quot;:1.1,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Carregamento&quot;},&quot;instagram&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://instagram.com/wmtur&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Redes sociais&quot;},&quot;photoColor&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Imagens&quot;},&quot;floating&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Vendas&quot;}}">
+class Component extends DCLogic {
+  state = { p: 0, phase: 'load', vi: 0, mobile: false, tour: 0, veh: 'jard', sec: '', scrolled: false, lb: null, gf: 'all', liked: {}, pop: false };
+  WA = 'M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-3.9-4.7-4.1-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .5l-.3.5-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.2.1.7-.1 1.3Z';
+  REEL = [
+    { img: 'assets/tour-extremo-oeste.png', label: 'Jardineira ou SW4 · 6 horas', tour: 'Extremo Oeste', priceLabel: 'Nova Tatajuba, dunas petrificadas e Duna do Funil · por carro', price: 'R$ 700' },
+    { img: 'assets/tour-leste.png', label: 'Jardineira ou SW4 · 4 a 6 horas', tour: 'Passeio Leste', priceLabel: 'Árvore da Preguiça, Buraco Azul e Lagoa do Paraíso · por carro', price: 'R$ 500' },
+    { img: 'assets/tour-oeste.png', label: 'Jardineira ou SW4 · 6 horas', tour: 'Passeio Oeste', priceLabel: 'Balsa, Mangue Seco Guriú, tobogã e skibunda · por carro', price: 'R$ 600' },
+    { img: 'assets/tour-extremo-leste.png', label: 'Jardineira ou SW4 · 4 a 6 horas', tour: 'Extremo Leste', priceLabel: 'Preá, Barrinha e off-road nas dunas · por carro', price: 'R$ 500' },
+  ];
+  TOURS = [
+    { name: 'Passeio Leste', price: 500, dur: '4 a 6 horas', img: 'assets/tour-leste.png', places: ['Árvore da Preguiça', 'Preá', 'Buraco Azul', 'Laguna Beach', 'Lagoa do Paraíso', 'Lagoa entre as Dunas'] },
+    { name: 'Extremo Leste', price: 500, dur: '4 a 6 horas', img: 'assets/tour-extremo-leste.png', places: ['Preá', 'Barrinha', 'Off-road nas dunas', 'Restaurante Komaki', 'Beira d’Água ou Munzuá'] },
+    { name: 'Passeio Oeste', price: 600, dur: '6 horas', img: 'assets/tour-oeste.png', places: ['Cavalo Marinho', 'Travessia de balsa', 'Mangue Seco Guriú', 'Off-road nas dunas', 'Tobogã e skibunda', 'Laguna Beach'] },
+    { name: 'Extremo Oeste', price: 700, dur: '6 horas', img: 'assets/tour-extremo-oeste.png', places: ['Nova Tatajuba', 'Dunas petrificadas', 'Duna do Funil com skibunda', 'Laguinho da Torta', 'Laguna Beach'] },
+  ];
+  ROUTES = [
+    { name: 'Jeri ⇄ Aeroporto', sw4: 450, picape: 300, comp: 100 },
+    { name: 'Preá ⇄ Aeroporto', sw4: 300, picape: 200, comp: 100 },
+    { name: 'Jeri ⇄ Fortaleza', sw4: 1200, picape: 1000, comp: 250 },
+    { name: 'Jeri ⇄ Parnaíba', sw4: 1000, picape: 900, comp: null },
+  ];
+  GALLERY = [
+    { v: 'assets/wm-video-1.mp4', caption: 'Dunas de Jericoacoara' }, { i: 'assets/wm-foto-1.jpeg', caption: 'Pôr do sol na praia' },
+    { v: 'assets/wm-video-2.mp4', caption: 'A caminho' }, { i: 'assets/wm-foto-3.jpeg', caption: 'Moradores locais' },
+    { v: 'assets/wm-video-3.mp4', caption: 'Beira-mar' }, { i: 'assets/wm-foto-2.jpeg', caption: 'Fim de tarde' },
+    { v: 'assets/wm-video-4.mp4', caption: 'Balsa do Rio Guriú' },
+    { i: 'assets/tour-leste.png', caption: 'Passeio Leste' }, { i: 'assets/tour-extremo-leste.png', caption: 'Extremo Leste' },
+    { i: 'assets/tour-oeste.png', caption: 'Passeio Oeste' }, { i: 'assets/tour-extremo-oeste.png', caption: 'Extremo Oeste' },
+    { i: 'assets/transfer-aeroporto.png', caption: 'Translado aeroporto' }, { i: 'assets/transfer-fortaleza.png', caption: 'Translado Fortaleza' },
+  ];
+  SHOT_MS = 5000;
+  galRefs = this.GALLERY.map(() => React.createRef());
+  componentDidMount() {
+    this._mq = matchMedia('(max-width: 900px)');
+    this._mqh = () => this.setState({ mobile: this._mq.matches });
+    this._mq.addEventListener('change', this._mqh); this._mqh();
+    this._cur = 0;
+    if (this.props.loader ?? true) { document.body.style.overflow = 'hidden'; this.startLoader(); }
+    else { this.setState({ phase: 'off' }); this.startReel(); setTimeout(() => this.jumpHash(), 60); }
+    this._onKey = (e) => { if (this.state.lb == null) return; if (e.key === 'Escape') this.closeLb(); if (e.key === 'ArrowRight') this.stepLb(1); if (e.key === 'ArrowLeft') this.stepLb(-1); };
+    addEventListener('keydown', this._onKey);
+    this._onScroll = () => { const sc = scrollY > 24; if (sc !== this.state.scrolled) this.setState({ scrolled: sc }); };
+    addEventListener('scroll', this._onScroll, { passive: true });
+    if ('IntersectionObserver' in window) {
+      this._spy = new IntersectionObserver((ents) => ents.forEach(en => { if (en.isIntersecting) this.setState({ sec: en.target.id }); }), { rootMargin: '-45% 0px -50% 0px' });
+      ['passeios', 'translados', 'frota', 'galeria'].forEach(id => { const el = document.getElementById(id); el && this._spy.observe(el); });
+      this._io = new IntersectionObserver((ents) => ents.forEach(en => { const v = en.target; if (en.isIntersecting) { v.muted = true; const pr = v.play(); pr && pr.catch(() => {}); } else v.pause(); }), { threshold: 0.25 });
+      this.galRefs.forEach(r => r.current && r.current.tagName === 'VIDEO' && this._io.observe(r.current));
+    }
+  }
+  componentWillUnmount() { clearTimeout(this._popT); cancelAnimationFrame(this._raf); this._timers?.forEach(clearTimeout); clearInterval(this._reelT); this._io?.disconnect(); this._spy?.disconnect(); removeEventListener('scroll', this._onScroll); removeEventListener('keydown', this._onKey); this._mq?.removeEventListener('change', this._mqh); document.body.style.overflow = ''; }
+  later(fn, ms) { (this._timers ||= []).push(setTimeout(fn, ms)); }
+  startLoader() {
+    const dur = Math.max(0.6, +(this.props.loaderDuration ?? 1.1)) * 1000, t0 = performance.now();
+    const tick = (now) => {
+      const e = Math.min(1, (now - t0) / dur);
+      const p = Math.round((1 - Math.pow(1 - e, 1.8)) * 100);
+      if (p !== this.state.p) this.setState({ p });
+      if (e < 1) { this._raf = requestAnimationFrame(tick); return; }
+      this.later(() => this.setState({ phase: 'exit' }), 100);
+      this.later(() => { this.setState({ phase: 'done' }); this.startReel(); }, 420);
+      this.later(() => { this.setState({ phase: 'off' }); document.body.style.overflow = ''; this.jumpHash(); }, 980);
+    };
+    this._raf = requestAnimationFrame(tick);
+  }
+  setShot(i) { this._cur = i; this.setState({ vi: i }); }
+  startReel() { clearInterval(this._reelT); this._reelT = setInterval(() => this.setShot((this._cur + 1) % this.REEL.length), this.SHOT_MS); }
+  goShot(i) { this.setShot(i); this.startReel(); }
+  jumpHash() { const id = decodeURIComponent(location.hash.slice(1)); if (!id) return; const el = document.getElementById(id); if (!el) return; const head = document.querySelector('header.nav'); const off = head ? head.offsetHeight : 0; window.scrollTo({ top: el.getBoundingClientRect().top + scrollY - off, behavior: 'auto' }); }
+  componentDidUpdate() { const gf = this.state.gf; if (this._lastGf === undefined) this._lastGf = 'all'; if (this._lastGf !== gf) { this._lastGf = gf; if (this._io) { this._io.disconnect(); this.galRefs.forEach(r => r.current && r.current.tagName === 'VIDEO' && this._io.observe(r.current)); } } }
+  openLb(i) { this.setState({ lb: i }); document.body.style.overflow = 'hidden'; this.galRefs.forEach(r => r.current && r.current.pause && r.current.pause()); }
+  likeLb() { const k = this.state.lb; this.setState(x => ({ liked: { ...x.liked, [k]: !x.liked[k] }, pop: true })); clearTimeout(this._popT); this._popT = setTimeout(() => this.setState({ pop: false }), 180); }
+  closeLb() { this.setState({ lb: null }); document.body.style.overflow = ''; }
+  stepLb(d) { const list = this.visIdx(); const pos = list.indexOf(this.state.lb); const n = list.length; this.setState({ lb: list[((pos < 0 ? 0 : pos) + d + n) % n] }); }
+  visIdx() { const gf = this.state.gf; return this.GALLERY.map((g, i) => i).filter(i => gf === 'all' || (gf === 'v' ? this.GALLERY[i].v : this.GALLERY[i].i)); }
+  wa(msg) { const n = String(this.props.whatsapp ?? '558896449185').replace(/\D/g, ''); return `https://wa.me/${n}?text=${encodeURIComponent(msg)}`; }
+  miniCar() {
+    const h = React.createElement, A = 'var(--color-accent)', K = 'var(--color-text)', B = 'var(--color-bg)';
+    const wheel = (cx) => h('g', { key: cx, style: { transformBox: 'fill-box', transformOrigin: 'center', animation: 'lcSpin .42s linear infinite' } },
+      h('circle', { cx, cy: 110, r: 26, fill: K }), h('circle', { cx, cy: 110, r: 12, fill: B }),
+      h('path', { d: `M${cx} 100 L${cx} 120 M${cx - 9} 105 L${cx + 9} 115`, stroke: K, strokeWidth: 5 }));
+    return h('span', { 'aria-hidden': true, style: { position: 'relative', display: 'block', flex: 'none', width: 58, height: 34, overflow: 'hidden' } },
+      h('span', { style: { position: 'absolute', left: 0, right: 0, bottom: 1, height: 2, background: K } }),
+      h('span', { style: { position: 'absolute', left: 0, right: 0, bottom: 5, height: 2, opacity: .45, backgroundImage: `repeating-linear-gradient(90deg, ${K} 0 6px, transparent 6px 24px)`, backgroundSize: '96px 2px', animation: 'lcTicks .35s linear infinite' } }),
+      [0, 1, 2].map(i => h('span', { key: 'd' + i, style: { position: 'absolute', left: 9, bottom: 4, width: 3 + i, height: 3 + i, borderRadius: '50%', background: i === 1 ? K : A, '--dx': `${-10 - i * 4}px`, '--dy': `${-4 - i * 3}px`, animation: `lcDust .6s ease-out ${i * 0.18}s infinite` } })),
+      h('span', { style: { position: 'absolute', left: 6, bottom: 2, width: 48, height: 26, transformOrigin: '50% 100%', animation: 'lcTilt 1.7s ease-in-out infinite' } },
+        h('svg', { viewBox: '0 0 260 140', style: { position: 'absolute', inset: 0, width: '100%', height: '100%', overflow: 'visible', transformOrigin: '50% 100%', animation: 'lcBounce .38s ease-in-out infinite' } },
+          h('circle', { cx: 22, cy: 76, r: 16, fill: K }),
+          h('rect', { x: 50, y: 4, width: 124, height: 8, fill: K }),
+          h('polygon', { points: '40,62 44,18 176,18 206,62', fill: A }),
+          h('polygon', { points: '30,60 238,60 250,74 250,100 30,100', fill: A }),
+          h('polygon', { points: '56,28 110,28 110,56 56,56', fill: B }),
+          h('polygon', { points: '122,28 170,28 190,56 122,56', fill: B }),
+          h('rect', { x: 198, y: 24, width: 8, height: 48, fill: K }),
+          h('path', { d: 'M40 100 A32 32 0 0 1 104 100 Z', fill: K }), h('path', { d: 'M162 100 A32 32 0 0 1 226 100 Z', fill: K })),
+        h('svg', { viewBox: '0 0 260 140', style: { position: 'absolute', inset: 0, width: '100%', height: '100%', overflow: 'visible' } }, wheel(72), wheel(194))));
+  }
+  scene() {
+    const h = React.createElement, gone = this.state.phase !== 'load', floorH = 64;
+    const A = 'var(--color-accent)', K = 'var(--color-text)', B = 'var(--color-bg)';
+    const dust = Array.from({ length: 10 }, (_, i) => h('span', { key: 'd' + i, style: {
+      position: 'absolute', left: '24%', bottom: '3%', width: 5 + (i % 4) * 3, height: 5 + (i % 4) * 3, borderRadius: '50%',
+      background: i % 3 === 0 ? K : i % 3 === 1 ? 'var(--color-accent-300)' : A,
+      '--dx': `${-90 - (i % 5) * 26}px`, '--dy': `${-18 - (i % 4) * 16}px`,
+      animation: `lcDust ${0.7 + (i % 3) * 0.15}s ease-out ${i * 0.08}s infinite` } }));
+    const wheel = (cx) => h('g', { key: cx, style: { transformBox: 'fill-box', transformOrigin: 'center', animation: 'lcSpin .42s linear infinite' } },
+      h('circle', { cx, cy: 110, r: 24, fill: K }),
+      h('circle', { cx, cy: 110, r: 19, fill: 'none', stroke: 'var(--color-neutral-700)', strokeWidth: 3, strokeDasharray: '5 5' }),
+      h('circle', { cx, cy: 110, r: 11, fill: B }),
+      h('path', { d: `M${cx} 101 L${cx} 119 M${cx - 8} 106 L${cx + 8} 114 M${cx - 8} 114 L${cx + 8} 106`, stroke: K, strokeWidth: 3, strokeLinecap: 'square' }));
+    const body = h('svg', { viewBox: '0 0 260 140', style: { position: 'absolute', inset: 0, width: '100%', height: '100%', overflow: 'visible', transformOrigin: '50% 100%', animation: 'lcBounce .38s ease-in-out infinite' } },
+      h('circle', { cx: 22, cy: 76, r: 16, fill: K }), h('circle', { cx: 22, cy: 76, r: 7, fill: B }),
+      h('rect', { x: 50, y: 6, width: 124, height: 5, fill: K }), h('rect', { x: 62, y: 11, width: 4, height: 8, fill: K }), h('rect', { x: 158, y: 11, width: 4, height: 8, fill: K }),
+      h('polygon', { points: '40,62 44,18 176,18 206,62', fill: A }),
+      h('polygon', { points: '30,60 238,60 250,74 250,100 30,100', fill: A }),
+      h('polygon', { points: '54,26 112,26 112,56 54,56', fill: B }),
+      h('polygon', { points: '120,26 172,26 194,56 120,56', fill: B }),
+      h('rect', { x: 30, y: 76, width: 220, height: 4, fill: B }),
+      h('rect', { x: 199, y: 26, width: 5, height: 46, fill: K }), h('rect', { x: 196, y: 22, width: 12, height: 6, fill: K }),
+      h('rect', { x: 241, y: 64, width: 7, height: 8, fill: B }),
+      h('path', { d: 'M42 100 A30 30 0 0 1 102 100 Z', fill: K }), h('path', { d: 'M164 100 A30 30 0 0 1 224 100 Z', fill: K }),
+      h('rect', { x: 236, y: 92, width: 20, height: 10, fill: K }), h('rect', { x: 22, y: 92, width: 14, height: 10, fill: K }));
+    const wheels = h('svg', { viewBox: '0 0 260 140', style: { position: 'absolute', inset: 0, width: '100%', height: '100%', overflow: 'visible' } }, wheel(72), wheel(194));
+    const winds = [['28%', 120, 0], ['40%', 70, .3], ['18%', 90, .55]].map(([top, w, d], i) => h('span', { key: 'w' + i, style: { position: 'absolute', right: '-10%', top, width: w, height: 2, background: K, animation: `lcWind 1.1s linear ${d}s infinite` } }));
+    const HZ = '44%', SUN = 'clamp(110px, 14vw, 200px)';
+    const wavePath = 'M0 10 q15 -8 30 0' + ' t30 0'.repeat(39);
+    const waveRow = (key, top, dur, op, col) => h('div', { key, style: { position: 'absolute', left: 0, top, width: '200%', height: 20, display: 'flex', opacity: op, animation: `lcDune ${dur}s linear infinite` } },
+      [0, 1].map(k => h('svg', { key: k, viewBox: '0 0 1200 20', preserveAspectRatio: 'none', style: { display: 'block', width: '50%', height: '100%' } }, h('path', { d: wavePath, fill: 'none', stroke: col, strokeWidth: 2 }))));
+    const palm = (x, s) => h('svg', { key: x, viewBox: '0 0 120 200', style: { position: 'absolute', left: x, bottom: 0, height: `${s}%`, overflow: 'visible' } },
+      h('path', { d: 'M60 200 C 58 150 66 100 78 60', fill: 'none', stroke: K, strokeWidth: 7 }),
+      ['M78 60 C 60 40 36 44 20 62', 'M78 60 C 70 34 52 22 32 22', 'M78 60 C 90 34 110 30 122 42', 'M78 60 C 98 52 114 64 116 84', 'M78 60 C 62 62 48 78 44 96'].map((d, i) => h('path', { key: i, d, fill: 'none', stroke: K, strokeWidth: 6, strokeLinecap: 'round' })),
+      h('circle', { cx: 74, cy: 68, r: 6, fill: A }), h('circle', { cx: 84, cy: 66, r: 6, fill: A }));
+    const palms = h('div', { key: 'palms', style: { position: 'absolute', left: 0, bottom: floorH - 4, width: '200%', height: '62%', animation: 'lcDune 5.5s linear infinite' } },
+      palm('8%', 100), palm('11%', 74), palm('34%', 88), palm('58%', 100), palm('61%', 74), palm('84%', 88));
+    const gulls = [['18%', '14%', 1, 0], ['26%', '22%', .75, .6], ['40%', '10%', .6, 1.1]].map(([l, t, s, d], i) => h('svg', { key: 'g' + i, viewBox: '0 0 26 8', style: { position: 'absolute', left: l, top: t, width: 30 * s, overflow: 'visible', animation: `lcGull 2.4s ease-in-out ${d}s infinite` } },
+      h('path', { d: 'M1 7 Q 7 0 13 6 Q 19 0 25 7', fill: 'none', stroke: K, strokeWidth: 2.5, strokeLinecap: 'round' })));
+    const glint = h('div', { key: 'glint', style: { position: 'absolute', right: '14%', top: `calc(${HZ} + 14px)`, width: SUN, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 } },
+      [90, 64, 44, 28].map((w, i) => h('span', { key: i, style: { display: 'block', width: `${w}%`, height: 4, background: A, animation: `lcShimmer ${1.4 + i * 0.3}s ease-in-out ${i * 0.2}s infinite` } })));
+    return [
+      h('div', { key: 'sun', style: { position: 'absolute', right: '14%', top: `calc(${HZ} - ${SUN} / 2)`, width: SUN, aspectRatio: '1', borderRadius: '50%', background: A } }),
+      ...gulls, ...winds,
+      h('div', { key: 'sea', style: { position: 'absolute', left: 0, right: 0, top: HZ, bottom: floorH, background: 'linear-gradient(180deg, oklch(0.62 0.12 230) 0%, oklch(0.72 0.11 215) 55%, oklch(0.84 0.08 200) 100%)', borderTop: `2px solid ${K}`, overflow: 'hidden' } },
+        waveRow('w1', '22%', 14, .35, 'oklch(0.45 0.12 240)'), waveRow('w2', '48%', 9, .55, 'oklch(0.95 0.03 210)'), waveRow('w3', '74%', 6, .9, '#fff')),
+      glint, palms,
+      h('div', { key: 'floor', style: { position: 'absolute', left: 0, right: 0, bottom: 0, height: floorH, background: 'var(--color-accent-100)', borderTop: `2px solid ${K}` } },
+        h('div', { style: { position: 'absolute', left: '-5%', right: '-5%', top: 0, height: 10, background: 'var(--color-accent-200)' } }),
+        h('svg', { viewBox: '0 0 1200 12', preserveAspectRatio: 'none', style: { position: 'absolute', left: '-5%', width: '110%', top: 4, height: 10, animation: 'lcFoam 2.2s ease-in-out infinite' } },
+          h('path', { d: 'M0 6 q20 -6 40 0' + ' t40 0'.repeat(29), fill: 'none', stroke: B, strokeWidth: 4 })),
+        h('div', { style: { position: 'absolute', left: 0, right: 0, top: 26, height: 2, backgroundImage: `repeating-linear-gradient(90deg, ${K} 0 28px, transparent 28px 96px)`, animation: 'lcTicks .32s linear infinite' } }),
+        h('div', { style: { position: 'absolute', left: 0, right: 0, top: 46, height: 2, opacity: .35, backgroundImage: `repeating-linear-gradient(90deg, ${K} 0 14px, transparent 14px 96px)`, animation: 'lcTicks .5s linear infinite' } })),
+      h('div', { key: 'car', style: { position: 'absolute', left: 'clamp(16px, 24%, 420px)', bottom: floorH - 6, width: 'clamp(230px, 30vw, 400px)', aspectRatio: '260 / 140',
+          transform: gone ? 'translateX(115vw)' : 'translateX(0)', transition: gone ? 'transform .4s cubic-bezier(.55,0,.9,.35)' : 'none' } },
+        h('div', { style: { position: 'absolute', inset: 0, transformOrigin: '50% 100%', animation: 'lcTilt 1.7s ease-in-out infinite' } }, ...dust, wheels, body)),
+    ];
+  }
+  renderVals() {
+    const s = this.state, h = React.createElement;
+    const loading = s.phase !== 'off';
+    const heroIn = s.phase === 'done' || s.phase === 'off';
+    const r = this.REEL[s.vi];
+    const filter = (this.props.photoColor ?? true) ? 'none' : 'grayscale(1) contrast(1.05)';
+    const step = s.p < 35 ? 'Calibrando os pneus' : s.p < 70 ? 'Descendo pra praia' : s.p < 98 ? 'Pegando a beira-mar' : 'Pronto. Bora!';
+    return {
+      showLoader: loading, scene: loading ? this.scene() : null, pct: s.p, barW: s.p + '%', step,
+      panelT: s.phase === 'done' ? 'translateY(-100%)' : 'translateY(0)', panelTr: s.phase === 'done' ? 'transform .55s cubic-bezier(.7,0,.2,1)' : 'none',
+      inT: heroIn ? 'translateY(0)' : 'translateY(105%)', inOp: heroIn ? 1 : 0,
+      instagram: this.props.instagram ?? 'https://instagram.com/wmtur', igHandle: '@' + String(this.props.instagram ?? 'https://instagram.com/wmtur').replace(/\/+$/, '').split('/').pop(),
+      logoCar: this.miniCar(),
+      headPad: s.scrolled ? '10px' : '16px',
+      navItems: [['#passeios', 'Passeios', 'passeios'], ['#translados', 'Translados', 'translados'], ['#frota', 'Frota', 'frota'], ['#galeria', 'Galeria', 'galeria']].map(([href, label, id]) => ({ href, label, color: s.sec === id ? 'var(--color-accent)' : 'var(--color-text)', bar: s.sec === id ? 'var(--color-accent)' : 'transparent' })),
+      isDesktop: !s.mobile, isMobile: s.mobile, navCta: s.mobile ? 'Reservar' : 'Reservar no WhatsApp',
+      heroCols: s.mobile ? 'minmax(0,1fr)' : 'minmax(0,7fr) minmax(0,5fr)',
+      reelBorder: s.mobile ? '0' : '2px solid var(--color-text)', reelPadL: s.mobile ? '0' : 'clamp(20px,3vw,40px)',
+      statCols: s.mobile ? 'repeat(2, minmax(0,1fr))' : 'repeat(4, minmax(0,1fr))',
+      statBorder3: s.mobile ? '0' : '2px solid var(--color-text)', statBorder5: s.mobile ? '0' : '2px solid var(--color-text)',
+      mediaFilter: filter, waPath: this.WA,
+      waGeneral: this.wa('Olá, WmTur! Vim pelo site e quero reservar um passeio em Jeri.'),
+      reel: { label: r.label, tour: r.tour, priceLabel: r.priceLabel, price: r.price, wa: this.wa(`Olá, WmTur! Quero reservar: ${r.tour} (${r.price}). Qual a disponibilidade?`) },
+      reelMedia: h('div', { style: { position: 'absolute', inset: 0, filter } },
+        this.REEL.map((v, i) => h('img', { key: v.img + (i === s.vi ? '-on' + (this._reelT || 0) : ''), src: v.img, alt: v.tour,
+          style: { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: i === s.vi ? 1 : 0, transition: 'opacity .6s ease',
+            animation: i === s.vi ? `hZoom ${this.SHOT_MS + 600}ms linear forwards` : 'none' } }))),
+      tourCols: s.mobile ? 'repeat(2, minmax(0,1fr))' : 'repeat(4, minmax(0,1fr))',
+      detailCols: s.mobile ? 'minmax(0,1fr)' : 'minmax(0,1.5fr) minmax(0,1fr)',
+      detailBorder: s.mobile ? '0' : '2px solid var(--color-text)', detailBorderTop: s.mobile ? '2px solid var(--color-text)' : '0',
+      fleetCols: s.mobile ? 'minmax(0,1fr)' : 'repeat(3, minmax(0,1fr))',
+      tourCards: this.TOURS.map((t, i) => ({ name: t.name, img: t.img, dur: t.dur, count: t.places.length, price: 'R$ ' + t.price, num: String(i + 1).padStart(2, '0'),
+        bg: i === s.tour ? 'var(--color-accent-100)' : 'var(--color-bg)', numBg: i === s.tour ? 'var(--color-accent)' : 'var(--color-text)',
+        pick: () => this.setState({ tour: i }) })),
+      sel: { name: this.TOURS[s.tour].name, dur: this.TOURS[s.tour].dur, price: 'R$ ' + this.TOURS[s.tour].price, places: this.TOURS[s.tour].places.map((p, i) => ({ n: String(i + 1).padStart(2, '0'), name: p })) },
+      tourVehs: [{ k: 'jard', label: 'Jardineira', sub: 'Aberta · até 12 pessoas' }, { k: 'sw4', label: 'Toyota SW4', sub: 'Fechada · até 6 pessoas' }].map(v => ({ ...v, dot: v.k === s.veh ? 'var(--color-accent)' : 'transparent', pick: () => this.setState({ veh: v.k }) })),
+      waSel: this.wa(`Olá, WmTur! Quero reservar o ${this.TOURS[s.tour].name} de ${s.veh === 'jard' ? 'Jardineira' : 'SW4'} (R$ ${this.TOURS[s.tour].price}). Qual a disponibilidade?`),
+      waCustom: this.wa('Olá, WmTur! Quero montar um passeio personalizado em Jeri. Os lugares que quero conhecer são: '),
+      routeRows: this.ROUTES.map(r => ({ name: r.name, sw4: 'R$ ' + r.sw4.toLocaleString('pt-BR'), picape: 'R$ ' + r.picape.toLocaleString('pt-BR'), comp: r.comp ? 'R$ ' + r.comp : '—',
+        wa: this.wa(`Olá, WmTur! Quero agendar um translado ${r.name.replace('⇄', '<->')}. Data: `) })),
+      galCols: s.mobile ? 'repeat(2, minmax(0,1fr))' : 'repeat(4, minmax(0,1fr))',
+      igGrid: [...this.visIdx().map(i => { const g = this.GALLERY[i]; return {
+          isMedia: true, isCta: false, isIg: false, caption: g.caption, open: () => this.openLb(i),
+          icon: g.v ? 'M8 5v14l11-7z' : 'M4 5h16v14H4zM4 15l5-5 4 4 3-3 4 4', iconFill: g.v ? 'currentColor' : 'none',
+          media: g.v
+            ? h('video', { key: g.v, ref: this.galRefs[i], src: g.v, muted: true, loop: true, playsInline: true, preload: 'metadata', style: { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', filter } })
+            : h('img', { key: g.i, src: g.i, alt: g.caption, loading: 'lazy', style: { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', filter } }) }; }),
+        { isMedia: false, isCta: true, isIg: false }, { isMedia: false, isCta: false, isIg: true }],
+      igPosts: this.GALLERY.length, avatarCar: this.miniCar(),
+      igHeadCols: s.mobile ? '88px minmax(0,1fr)' : '150px minmax(0,1fr)', igAvatar: s.mobile ? '88px' : '150px',
+      igHandleBare: String(this.props.instagram ?? 'https://instagram.com/wmtur').replace(/\/+$/, '').split('/').pop(),
+      igHighlights: [['#passeios', 'Passeios', 'Tour', 'var(--color-accent)', 'var(--color-bg)'], ['#translados', 'Translados', 'Ida', 'var(--color-text)', 'var(--color-bg)'], ['#frota', 'Frota', '4x4', 'var(--color-accent-100)', 'var(--color-text)'], ['#topo', 'Reservar', 'Jeri', 'var(--color-accent)', 'var(--color-bg)']].map(([href, label, short, bg, fg]) => ({ href, label, short, bg, fg })),
+      igTabs: [['all', 'Publicações', 'M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z'], ['v', 'Vídeos', 'M8 5v14l11-7z'], ['i', 'Fotos', 'M4 5h16v14H4zM4 15l5-5 4 4 3-3 4 4']].map(([k, label, icon]) => ({ label, icon, bar: s.gf === k ? 'var(--color-text)' : 'transparent', color: s.gf === k ? 'var(--color-text)' : 'var(--color-neutral-500)', pick: () => this.setState({ gf: k }) })),
+      waGallery: this.wa('Olá, WmTur! Vi a galeria no site e quero reservar um passeio.'),
+      lbOpen: s.lb != null,
+      lb: s.lb != null ? { caption: this.GALLERY[s.lb].caption, pos: `${this.visIdx().indexOf(s.lb) + 1} / ${this.visIdx().length}`,
+          likeFill: s.liked[s.lb] ? 'var(--color-accent)' : 'none', likeColor: s.liked[s.lb] ? 'var(--color-accent)' : 'var(--color-text)', likeScale: s.pop ? 1.25 : 1,
+          wa: this.wa(`Olá, WmTur! Vi "${this.GALLERY[s.lb].caption}" na galeria do site e quero fazer esse passeio.`) }
+        : { caption: '', pos: '', likeFill: 'none', likeColor: 'var(--color-text)', likeScale: 1, wa: '#' },
+      lbW: s.mobile ? '100%' : 'min(470px, 100%)', lbPad: s.mobile ? '56px 0 0' : 'clamp(14px,3vw,32px)', lbMediaMax: s.mobile ? 'calc(100vh - 220px)' : 'calc(100vh - 230px)',
+      lbLike: () => this.likeLb(),
+      lbMedia: s.lb == null ? null : (() => { const g = this.GALLERY[s.lb]; const st = { display: 'block', width: '100%', height: '100%', objectFit: 'cover', filter };
+        return g.v ? h('video', { key: g.v, src: g.v, controls: true, autoPlay: true, playsInline: true, loop: true, style: st }) : h('img', { key: g.i, src: g.i, alt: g.caption, style: st, onDoubleClick: () => { if (!this.state.liked[s.lb]) this.likeLb(); } }); })(),
+      lbClose: () => this.closeLb(), lbPrev: (e) => { e.stopPropagation(); this.stepLb(-1); }, lbNext: (e) => { e.stopPropagation(); this.stepLb(1); }, stop: (e) => e.stopPropagation(),
+
+      reelBars: this.REEL.map((v, i) => h('button', { key: i, type: 'button', 'aria-label': v.label, onClick: () => this.goShot(i),
+          style: { flex: 1, height: 18, padding: '8px 0', border: 0, background: 'transparent', cursor: 'pointer' } },
+        h('span', { style: { display: 'block', position: 'relative', height: 3, background: 'rgba(243,242,242,.4)', overflow: 'hidden' } },
+          i < s.vi ? h('span', { style: { position: 'absolute', inset: 0, background: 'var(--color-bg)' } }) :
+          i === s.vi && heroIn ? h('span', { key: 'f' + s.vi + (this._reelT || 0), style: { position: 'absolute', inset: 0, background: 'var(--color-bg)', transformOrigin: 'left', animation: `hFill ${this.SHOT_MS}ms linear forwards` } }) : null))),
+      floatBtn: (this.props.floating ?? true) ? h('a', { href: this.wa('Olá, WmTur! Vim pelo site e quero tirar uma dúvida.'), target: '_blank', rel: 'noopener', 'aria-label': 'WhatsApp',
+          style: { position: 'fixed', right: 18, bottom: 18, zIndex: 50, width: 62, height: 62, borderRadius: '50%', background: '#25d366', display: 'grid', placeItems: 'center', boxShadow: 'var(--shadow-md)' } },
+        h('span', { style: { position: 'absolute', inset: 0, borderRadius: '50%', background: '#25d366', animation: 'hPulse 1.8s ease-out infinite' } }),
+        h('svg', { width: 30, height: 30, viewBox: '0 0 24 24', fill: '#fff', style: { position: 'relative' } }, h('path', { d: this.WA }))) : null,
+    };
+  }
+}
+</script>
+</body>
+</html>
