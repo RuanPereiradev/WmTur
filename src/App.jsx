@@ -1,34 +1,33 @@
-import React, { useState } from 'react';
-import Loader from './components/Loader.jsx';
+import React from 'react';
 import Header from './components/Header.jsx';
 import Hero from './components/Hero.jsx';
-import Stats from './components/Stats.jsx';
 import Passeios from './components/Passeios.jsx';
 import Translados from './components/Translados.jsx';
-import Frota from './components/Frota.jsx';
-import Galeria from './components/Galeria.jsx';
-import WhatsAppFloat from './components/WhatsAppFloat.jsx';
+import { Marquee, Personalizado, Frota, Sobre, Fechamento } from './components/Secoes.jsx';
 import Footer from './components/Footer.jsx';
-import { jumpToHash } from './hooks.js';
+import WhatsAppFloat from './components/WhatsAppFloat.jsx';
+import { useMobile } from './components/ui.jsx';
+import { wa } from './config.js';
+
+const waGeneral = wa('Olá, WmTur! Vim pelo site e quero reservar um passeio em Jeri. 🏝️');
 
 export default function App() {
-  // 'load' -> 'exit' (carro sai) -> 'done' (painel sobe) -> 'off' (removido)
-  const [phase, setPhase] = useState('load');
-  const heroIn = phase === 'done' || phase === 'off';
+  const mobile = useMobile();
   return (
     <>
-      {phase !== 'off' && <Loader phase={phase} setPhase={setPhase} onEnd={jumpToHash} />}
-      <Header />
-      <main id="topo" className="wrap">
-        <Hero visible={heroIn} />
-        <Stats />
-        <Passeios />
+      <Header mobile={mobile} waGeneral={waGeneral} />
+      <main>
+        <Hero waGeneral={waGeneral} />
+        <Marquee />
+        <Passeios mobile={mobile} />
+        <Personalizado />
         <Translados />
         <Frota />
-        <Galeria />
+        <Sobre mobile={mobile} waGeneral={waGeneral} />
+        <Fechamento waGeneral={waGeneral} />
       </main>
       <Footer />
-      <WhatsAppFloat />
+      <WhatsAppFloat mobile={mobile} />
     </>
   );
 }
