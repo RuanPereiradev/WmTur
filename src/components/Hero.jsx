@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { TOURS, A, vehicleFor } from '../data.js';
-import { wa, brl } from '../config.js';
+import { wa } from '../config.js';
 import { active, waBtn } from './ui.jsx';
 
 const HEAD = ['Jeri de um jeito', 'que você nunca sonhou.'];
-const PLANS = [...TOURS.map(t => ({ label: t.name, price: brl(t.price) })), { label: 'Translado', price: brl(100) }, { label: 'Personalizado', price: 'sob consulta' }];
+const PLANS = [...TOURS.map(t => ({ label: t.name })), { label: 'Translado' }, { label: 'Personalizado' }];
 const step = { fontSize: 13, fontWeight: 800, letterSpacing: '.08em', textTransform: 'uppercase', color: '#e8743a' };
 const stepBtn = { font: 'inherit', cursor: 'pointer', width: 44, height: 44, border: 0, borderRadius: 9, background: '#eaf4f2', color: '#0f6f77', fontSize: 22, fontWeight: 800 };
 const fmtDate = (d) => { if (!d) return 'a combinar'; const [y, m, day] = d.split('-'); return `${day}/${m}/${y}`; };
@@ -61,8 +61,8 @@ function Planner() {
           <div style={{ fontWeight: 800, fontSize: 17, color: '#0f6f77' }}>{vehicleFor(people)}</div>
         </div>
         <div style={{ textAlign: 'right' }}>
-          <div style={{ fontSize: 12, color: '#5a6b6d' }}>a partir de</div>
-          <div style={{ fontFamily: "'DM Serif Display'", fontSize: 26, color: '#e8743a', lineHeight: 1 }}>{p.price}</div>
+          <div style={{ fontSize: 12, color: '#5a6b6d' }}>roteiro</div>
+          <div style={{ fontFamily: "'DM Serif Display'", fontStyle: 'italic', fontSize: 22, color: '#e8743a', lineHeight: 1.1 }}>{p.label}</div>
         </div>
       </div>
       <a className="wa-btn" href={wa(msg)} target="_blank" rel="noopener" style={{ ...waBtn, justifyContent: 'space-between', fontSize: 18, padding: '18px 22px', borderRadius: 14 }}>

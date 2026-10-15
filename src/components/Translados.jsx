@@ -1,20 +1,19 @@
 import React, { useState } from 'react';
 import { ROUTES, VEHICLES } from '../data.js';
-import { wa, brl } from '../config.js';
+import { wa } from '../config.js';
 import { active, kicker, h2, waBtn } from './ui.jsx';
 
 export default function Translados() {
   const [i, setI] = useState(0), [veh, setVeh] = useState('sw4');
   const r = ROUTES[i];
-  const vehs = VEHICLES.filter(v => r.p[v.k] != null);
-  const k = r.p[veh] != null ? veh : 'sw4';
+  const vehs = VEHICLES.filter(v => r.vehs.includes(v.k));
+  const k = r.vehs.includes(veh) ? veh : 'sw4';
   const label = vehs.find(v => v.k === k).label;
-  const comp = k === 'comp';
   return (
     <section id="translados" style={{ maxWidth: 1240, margin: '0 auto', padding: 'clamp(64px,8vw,110px) clamp(16px,4vw,40px)', scrollMarginTop: 64 }}>
       <div style={kicker}>Porta a porta</div>
       <h2 style={{ ...h2, margin: '6px 0 12px' }}>Translados</h2>
-      <p style={{ margin: '0 0 36px', fontSize: 18, color: '#5a6b6d', maxWidth: '52ch' }}>Escolha a rota e o veículo — o valor aparece na hora.</p>
+      <p style={{ margin: '0 0 36px', fontSize: 18, color: '#5a6b6d', maxWidth: '52ch' }}>Escolha a rota e o veículo — a gente confirma tudo pelo WhatsApp.</p>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 380px), 1fr))', gap: 28, alignItems: 'stretch' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -23,7 +22,7 @@ export default function Translados() {
               <img src={x.img} alt="" style={{ width: 84, height: 60, objectFit: 'cover', borderRadius: 10, flex: 'none' }} />
               <span style={{ flex: 1, minWidth: 0 }}>
                 <span style={{ display: 'block', fontFamily: "'DM Serif Display'", fontStyle: 'italic', fontSize: 24, color: '#0f6f77', lineHeight: 1.1 }}>{x.name}</span>
-                <span style={{ display: 'block', fontSize: 14, color: '#5a6b6d', marginTop: 2 }}>a partir de {brl(Math.min(...Object.values(x.p)))}</span>
+                <span style={{ display: 'block', fontSize: 14, color: '#5a6b6d', marginTop: 2 }}>{VEHICLES.filter(v => x.vehs.includes(v.k)).map(v => v.label).join(' · ')}</span>
               </span>
               <span style={{ fontSize: 20, color: '#e8743a', fontWeight: 800 }}>{n === i ? '●' : ''}</span>
             </button>
@@ -44,10 +43,10 @@ export default function Translados() {
             </div>
             <div style={{ display: 'flex', alignItems: 'end', justifyContent: 'space-between', gap: 12, marginTop: 'auto', flexWrap: 'wrap' }}>
               <div>
-                <div style={{ fontSize: 13, color: '#5a6b6d' }}>{comp ? 'por pessoa' : 'por veículo'}</div>
-                <div style={{ fontFamily: "'DM Serif Display'", fontSize: 52, lineHeight: 1, color: '#e8743a' }}>{brl(r.p[k])}</div>
+                <div style={{ fontSize: 13, color: '#5a6b6d' }}>veículo escolhido</div>
+                <div style={{ fontFamily: "'DM Serif Display'", fontStyle: 'italic', fontSize: 36, lineHeight: 1, color: '#e8743a' }}>{label}</div>
               </div>
-              <a className="wa-btn" href={wa(`Olá, WmTur! Quero agendar o translado ${r.name.replace('⇄', '<->')} de ${label} (${brl(r.p[k])}${comp ? '/pessoa' : ''}). Data: `)} target="_blank" rel="noopener" style={{ ...waBtn, fontSize: 17, padding: '16px 22px' }}>Agendar translado →</a>
+              <a className="wa-btn" href={wa(`Olá, WmTur! Quero agendar o translado ${r.name.replace('⇄', '<->')} de ${label}. Data: `)} target="_blank" rel="noopener" style={{ ...waBtn, fontSize: 17, padding: '16px 22px' }}>Agendar translado →</a>
             </div>
           </div>
         </div>

@@ -26,7 +26,7 @@ export default function App() {
         <Sobre mobile={mobile} waGeneral={waGeneral} />
         <Fechamento waGeneral={waGeneral} />
       </main>
-      <Footer />
+      <Footer mobile={mobile} />
       <WhatsAppFloat mobile={mobile} />
     </>
   );

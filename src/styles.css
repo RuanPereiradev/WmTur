@@ -20,3 +20,4 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
 .dark-btn:hover { background: #0d4f55 !important; color: #fffdf6 !important; }
 .tabs::-webkit-scrollbar { display: none; }
 input[type=date] { -webkit-appearance: none; appearance: none; min-height: 56px; }
+.ft-link:hover { color: #ffc59e !important; }

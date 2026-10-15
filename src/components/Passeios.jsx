@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { TOURS, TEXTURA } from '../data.js';
-import { wa, brl } from '../config.js';
+import { wa } from '../config.js';
 import { kicker, h2, waBtn } from './ui.jsx';
 
 const info = { padding: '12px 24px', borderLeft: '1px solid #d9e6e4', display: 'flex', flexDirection: 'column', gap: 2 };
@@ -9,7 +9,7 @@ const infoV = { fontWeight: 700, fontSize: 16, color: '#1d2a2c' };
 
 export default function Passeios({ mobile }) {
   const [i, setI] = useState(0);
-  const t = TOURS[i], price = 'R$' + t.price;
+  const t = TOURS[i];
   return (
     <section id="passeios" style={{ maxWidth: 1240, margin: '0 auto', padding: 'clamp(64px,8vw,110px) clamp(16px,4vw,40px)', scrollMarginTop: 64 }}>
       <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'end', justifyContent: 'space-between', gap: 20, marginBottom: 36 }}>
@@ -32,8 +32,8 @@ export default function Passeios({ mobile }) {
               <span style={{ position: 'absolute', left: 16, bottom: 8, fontFamily: 'Caveat, cursive', fontSize: 28, color: '#0f6f77' }}>{t.name} · Jeri</span>
             </div>
             <div style={{ position: 'absolute', right: -4, top: -4, width: 88, height: 88, borderRadius: '50%', background: '#f2894a', color: '#3a1a06', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', lineHeight: 1, boxShadow: '0 10px 24px rgba(0,0,0,.3)', animation: 'wmSpin 18s linear infinite' }}>
-              <span style={{ fontFamily: "'DM Serif Display'", fontSize: 26 }}>{price}</span>
-              <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.06em', textTransform: 'uppercase', marginTop: 2 }}>por carro</span>
+              <span style={{ fontFamily: "'DM Serif Display'", fontSize: 32 }}>{t.places.length}</span>
+              <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.06em', textTransform: 'uppercase', marginTop: 2 }}>paradas</span>
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, paddingTop: 16, borderTop: '1px solid rgba(255,253,246,.2)', color: '#fffdf6' }}>
@@ -59,11 +59,7 @@ export default function Passeios({ mobile }) {
             ))}
           </ol>
           <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 20, paddingTop: 6 }}>
-            <div>
-              <div style={{ fontSize: 13, color: '#5a6b6d' }}>por carro</div>
-              <div style={{ fontFamily: "'DM Serif Display'", fontSize: 48, lineHeight: 1, color: '#1d2a2c' }}>{price}</div>
-            </div>
-            <a className="wa-btn" href={wa(`Olá, WmTur! Quero reservar o ${t.name} (${brl(t.price)}). Qual a disponibilidade?`)} target="_blank" rel="noopener" style={{ ...waBtn, flex: 1, minWidth: 240, justifyContent: 'space-between', fontSize: 18, padding: '18px 24px', boxShadow: '0 10px 26px rgba(37,211,102,.35)' }}><span>Reservar {t.name}</span><span>→</span></a>
+            <a className="wa-btn" href={wa(`Olá, WmTur! Quero reservar o ${t.name}. Qual a disponibilidade?`)} target="_blank" rel="noopener" style={{ ...waBtn, flex: 1, minWidth: 240, justifyContent: 'space-between', fontSize: 18, padding: '18px 24px', boxShadow: '0 10px 26px rgba(37,211,102,.35)' }}><span>Reservar {t.name}</span><span>→</span></a>
           </div>
         </div>
       </div>
